@@ -48,8 +48,9 @@ public class UserServiceImpl implements UserInterface {
 	public List<Book> searchBooks(String title, String category, String author) {
 
 		@SuppressWarnings("unchecked")
-		List<Book> response=restTemplate.getForObject("http://localhost:8082/api/v1/digitalbooks/search", List.class, title, category,
-				author);
+		List<Book> response=
+		restTemplate.getForObject("http://localhost:8082/api/v1/digitalbooks/search?title="+title+"&category="+category+"&author="+author, List.class
+				);
 		return response;
 
 	}

@@ -12,6 +12,10 @@ import org.springframework.security.core.userdetails.UserDetails;
 import com.cog.user.model.User;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
+
 public class UserPrinciple implements UserDetails{
 	
 	/**
@@ -52,7 +56,7 @@ public class UserPrinciple implements UserDetails{
 	}
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
-		// TODO Auto-generated method stub
+		log.info("authorities :"+authorities);
 		return authorities;
 	}
 	

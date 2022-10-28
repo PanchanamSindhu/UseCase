@@ -38,15 +38,15 @@ public class AppSecurityConfig extends WebSecurityConfigurerAdapter {
 	public PasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();
 	}
-
-	@Override
-	protected void configure(HttpSecurity http) throws Exception {
-		http.cors().and().csrf().disable().authorizeRequests().antMatchers("/reg/**").permitAll()
-		.antMatchers("/").permitAll()
-		.antMatchers("/digitalbooks/**").permitAll()
-		.anyRequest().authenticated();
-			//.antMatchers("/signup/**").permitAll().anyRequest().authenticated();
-		
-	}
+//
+//	@Override
+//	protected void configure(HttpSecurity http) throws Exception {
+//		http.cors().and().csrf().disable().authorizeRequests().antMatchers("/reg/**").permitAll()
+//		.antMatchers("/").permitAll()
+//		.antMatchers("/digitalbooks/**").permitAll()
+//		.anyRequest().authenticated();
+//			//.antMatchers("/signup/**").permitAll().anyRequest().authenticated();
+//		
+//	}
 
 }
