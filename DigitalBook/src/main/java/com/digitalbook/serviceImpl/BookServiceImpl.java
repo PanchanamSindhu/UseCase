@@ -1,6 +1,5 @@
 package com.digitalbook.serviceImpl;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -28,7 +27,7 @@ public class BookServiceImpl implements BookService {
 	@Override
 	public Book saveBook(Book book) {
 		// TODO Auto-generated method stub
-		return null;
+		return bookRepository.save(book);
 	}
 
 	@Override

@@ -16,6 +16,8 @@ import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
+import lombok.Data;
+
 /**
  * 
  * @author sindhu
@@ -23,9 +25,10 @@ import com.fasterxml.jackson.annotation.JsonFormat;
  *
  */
 
+
 @Component
 @Entity
-@Table(name = "book")
+@Table(name = "book_data")
 public class Book {
 
 	@Id
