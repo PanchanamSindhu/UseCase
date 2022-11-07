@@ -12,10 +12,12 @@ import com.digitalbook.entity.Book;
  *
  */
 public interface BookService {
-	public Book saveBook(Book book);
+	public Book saveBook(Book book,Integer AuthorId);
 
 	public Book getBook(String title);
 
 	public List<Book> searchBooks(String title, String category, String author);
+
+	public Book bookUpdate(Book book, Integer authorId, Integer bookId);
 
 }

@@ -31,10 +31,10 @@ public class UserPrinciple implements UserDetails{
 	
 	private Collection<? extends GrantedAuthority> authorities;
 
-	public UserPrinciple(Integer id, String name, String username, String emailId, String password,
+	public UserPrinciple(int i, String name, String username, String emailId, String password,
 			Collection<? extends GrantedAuthority> authorities) {
 		super();
-		this.id = id;
+		this.id = i;
 		this.name = name;
 		this.username = username;
 		this.emailId = emailId;
@@ -60,7 +60,22 @@ public class UserPrinciple implements UserDetails{
 		return authorities;
 	}
 	
+
+	public Integer getId() {
+		return id;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
 	
+	public String getEmailId() {
+		return emailId;
+	}
 
 	@Override
 	public String getPassword() {

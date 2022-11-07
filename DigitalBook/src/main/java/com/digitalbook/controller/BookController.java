@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -37,27 +38,29 @@ public class BookController {
 	@Autowired
 	BookService bookService;
 
-
 	@GetMapping("/search")
-	public List<Book> searchBooks(@RequestParam("title")  String bookTitle,
-			@RequestParam("category") String bookCategory,
-			@RequestParam("author") String bookAuthor) {
-		
-		
+	public List<Book> searchBooks(@RequestParam("title") String bookTitle,
+			@RequestParam("category") String bookCategory, @RequestParam("author") String bookAuthor) {
+
 		List<Book> listOfBooks = bookService.searchBooks(bookTitle, bookCategory, bookAuthor);
 		// response = new ResponseEntity<>(listOfBooks, HttpStatus.OK);
 		return listOfBooks;
 	}
-	
+
 	@PostMapping("/author/{authorId}/books")
 	public Book saveBook(@PathVariable("authorId") int authorId, @Valid @RequestBody Book book) {
-	
-			Book book1 = bookService.saveBook(book);
-		
+		log.info("###BookController - A- createBook####");
+		Book book1 = bookService.saveBook(book, authorId);
+
 		return book1;
-		
+
 	}
-	
-	
+
+	@PostMapping({ "/author/{authorId}/books/{bookId}" })
+	public Book upadteBook(@RequestBody Book book, @PathVariable Integer authorId, @PathVariable Integer bookId) {
+
+		log.info("###BookController - A- editBook####");
+		return this.bookService.bookUpdate(book, authorId, bookId);
+	}
 
 }

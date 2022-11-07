@@ -2,6 +2,7 @@ package com.digitalbook.entity;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Date;
 
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -20,11 +21,10 @@ import lombok.Data;
 
 /**
  * 
- * @author sindhu
- * Book entity is used for declaring the details of book and validation of book details
+ * @author sindhu Book entity is used for declaring the details of book and
+ *         validation of book details
  *
  */
-
 
 @Component
 @Entity
@@ -36,6 +36,7 @@ public class Book {
 	private int id;
 	private String logo;
 	private String title;
+	private Integer bookAuthorId;
 	@Enumerated(EnumType.STRING)
 	private BookCategory category;
 	private BigDecimal price;
@@ -44,31 +45,13 @@ public class Book {
 	private String publisher;
 	private String content;
 	private Boolean active;
+	private String bookSubscribe;
+	private Date bookSubscribeDate;
+	private String bookSubscribeId;
 
 	@DateTimeFormat(style = "yyyy-MM-dd")
 	@JsonFormat(pattern = "yyyy-MM-dd")
 	private LocalDate publishedDate;
-
-	public Book(int id, String logo, String title, BookCategory category, BigDecimal price, String authorUserName,
-			String authorName, String publisher, String content, Boolean active, LocalDate publishedDate) {
-		super();
-		this.id = id;
-		this.logo = logo;
-		this.title = title;
-		this.category = category;
-		this.price = price;
-		this.authorUserName = authorUserName;
-		this.authorName = authorName;
-		this.publisher = publisher;
-		this.content = content;
-		this.active = active;
-		this.publishedDate = publishedDate;
-	}
-
-	public Book() {
-		super();
-		// TODO Auto-generated constructor stub
-	}
 
 	public int getId() {
 		return id;
@@ -92,6 +75,14 @@ public class Book {
 
 	public void setTitle(String title) {
 		this.title = title;
+	}
+
+	public Integer getBookAuthorId() {
+		return bookAuthorId;
+	}
+
+	public void setBookAuthorId(Integer bookAuthorId) {
+		this.bookAuthorId = bookAuthorId;
 	}
 
 	public BookCategory getCategory() {
@@ -150,6 +141,30 @@ public class Book {
 		this.active = active;
 	}
 
+	public String getBookSubscribe() {
+		return bookSubscribe;
+	}
+
+	public void setBookSubscribe(String bookSubscribe) {
+		this.bookSubscribe = bookSubscribe;
+	}
+
+	public Date getBookSubscribeDate() {
+		return bookSubscribeDate;
+	}
+
+	public void setBookSubscribeDate(Date bookSubscribeDate) {
+		this.bookSubscribeDate = bookSubscribeDate;
+	}
+
+	public String getBookSubscribeId() {
+		return bookSubscribeId;
+	}
+
+	public void setBookSubscribeId(String bookSubscribeId) {
+		this.bookSubscribeId = bookSubscribeId;
+	}
+
 	public LocalDate getPublishedDate() {
 		return publishedDate;
 	}
@@ -160,9 +175,16 @@ public class Book {
 
 	@Override
 	public String toString() {
-		return "Book [id=" + id + ", logo=" + logo + ", title=" + title + ", category=" + category + ", price=" + price
-				+ ", authorUserName=" + authorUserName + ", authorName=" + authorName + ", publisher=" + publisher
-				+ ", content=" + content + ", active=" + active + ", publishedDate=" + publishedDate + "]";
+		return "Book [id=" + id + ", logo=" + logo + ", title=" + title + ", bookAuthorId=" + bookAuthorId
+				+ ", category=" + category + ", price=" + price + ", authorUserName=" + authorUserName + ", authorName="
+				+ authorName + ", publisher=" + publisher + ", content=" + content + ", active=" + active
+				+ ", bookSubscribe=" + bookSubscribe + ", bookSubscribeDate=" + bookSubscribeDate + ", bookSubscribeId="
+				+ bookSubscribeId + ", publishedDate=" + publishedDate + "]";
 	}
+
+	
+
+	
+	
 
 }

@@ -6,7 +6,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -19,7 +22,10 @@ import com.cog.user.repository.RoleRepository;
 import com.cog.user.repository.UserRepository;
 import com.cog.user.service.UserInterface;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Service
+@Slf4j
 public class UserServiceImpl implements UserInterface {
 
 	@Autowired
@@ -48,11 +54,52 @@ public class UserServiceImpl implements UserInterface {
 	public List<Book> searchBooks(String title, String category, String author) {
 
 		@SuppressWarnings("unchecked")
-		List<Book> response=
-		restTemplate.getForObject("http://localhost:8082/api/v1/digitalbooks/search?title="+title+"&category="+category+"&author="+author, List.class
-				);
+		List<Book> response = restTemplate.getForObject("http://localhost:8082/api/v1/digitalbooks/search?title="
+				+ title + "&category=" + category + "&author=" + author, List.class);
 		return response;
 
+	}
+
+	@Override
+	public Book saveBook(@Valid Book book, int authorId) {
+		Book book1 = null;
+		User user = this.getUser(authorId, ERole.ROLE_AUTHOR);
+		log.info("usre is :" + user);
+		if (user != null) {
+			book1 = restTemplate.postForObject(
+					"http://localhost:8082/api/v1/digitalbooks/author/" + user.getId() + "/books", book, Book.class);
+		}
+		book1.setAuthorId(user.getId());
+		book1.setAuthorName(user.getUserName());
+
+		return book1;
+	}
+
+	public Book bookUpdate(Book book, int authorId, int bookId) {
+
+		log.info("!!!!UserService bookUpdate####");
+
+		Book bData = restTemplate.postForObject(
+				"http://localhost:8082/api/v1/digitalbooks/author/" + authorId + "/books/" + bookId, book, Book.class);
+
+		return bData;
+	}
+
+	public ResponseEntity<?> bookBlocking(int bookId, Integer authorId, String status) {
+		log.info("!!!!UserService bookblocking!!!");
+
+		String s = restTemplate.postForObject(
+				"http://localhost:8082/api/v1/digitalbooksauthor/" + authorId + "/book/" + bookId + "?block=" + status,
+				"", String.class);
+		return new ResponseEntity<>(s, HttpStatus.OK);
+	}
+
+	public ResponseEntity<?> bookUnblocking(int bookId, Integer authorId, String status) {
+		log.info("!!!!UserService bookUnblocking!!!!");
+		String s = restTemplate.postForObject(
+				"http://localhost:8082/api/v1/digitalbooks/author/" + authorId + "/book/" + bookId + "?block=" + status,
+				"", String.class);
+		return new ResponseEntity<>(s, HttpStatus.OK);
 	}
 
 }
