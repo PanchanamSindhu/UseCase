@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.digitalbook.entity.Book;
@@ -56,11 +57,46 @@ public class BookController {
 
 	}
 
-	@PostMapping({ "/author/{authorId}/books/{bookId}" })
-	public Book upadteBook(@RequestBody Book book, @PathVariable Integer authorId, @PathVariable Integer bookId) {
+	@PostMapping({ "/author/{authorId}/book" })
+	public Book upadteBook(@RequestBody Book book, @PathVariable Integer authorId) {
 
 		log.info("###BookController - A- editBook####");
-		return this.bookService.bookUpdate(book, authorId, bookId);
+		return this.bookService.bookUpdate(book, authorId);
+	}
+
+	@PostMapping({ "/author/{authorId}/book/{bookId}" })
+	@ResponseBody
+	public ResponseEntity<?> blockBook(@PathVariable Integer authorId, @PathVariable Integer bookId,
+			@RequestParam("active") String status) {
+		if (status.equals("yes")) {
+			log.info("****BookController Blocking Book **");
+			return this.bookService.bookBlocking(bookId, authorId);
+		} else {
+			log.info("***BookController UnBlocking Book ***");
+			return this.bookService.bookUnblocking(bookId, authorId);
+		}
+	}
+
+	@PostMapping({ "/{bookId}/subscribe" })
+	ResponseEntity<?> subscribeBook(@PathVariable Integer bookId) {
+		log.info("###BookController - Subscribing ####");
+		return new ResponseEntity(this.bookService.bookSubscribing(bookId), HttpStatus.OK);
+	}
+
+	@ResponseBody
+	@GetMapping({ "/readers/{authorId}/books" })
+	public ResponseEntity<?> fetchSubscribeBooks(@PathVariable Integer authorId) {
+		log.info("###BookController - Fetch All Subscribe Books####");
+		return new ResponseEntity(this.bookService.fetchAllSubscribedBooks(authorId), HttpStatus.OK);
+	}
+
+	@GetMapping("/author/{authorId}/allbooks")
+	public List<Book> getAllAuthorBooks(@PathVariable("authorId") int authorId) {
+		log.info("inside Book controller all books");
+		
+		List<Book> listOfBooks = bookService.getAllAuthorBooks(authorId);
+		
+		return listOfBooks;
 	}
 
 }

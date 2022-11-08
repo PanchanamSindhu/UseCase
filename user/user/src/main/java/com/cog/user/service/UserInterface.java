@@ -19,4 +19,22 @@ public interface UserInterface {
 
 	Book saveBook(@Valid Book book, int authorId);
 
+	Book bookUpdate(Book book, int authorId);
+
+	ResponseEntity<?> bookBlocking(int bookId, Integer authorId, String status);
+
+	ResponseEntity<?> bookUnblocking(int bookId, Integer authorId, String status);
+
+	ResponseEntity<?> subscribeBook(String bookId);
+
+	ResponseEntity<?> allSubscribedBook(String emailId);
+
+	ResponseEntity<?> subscribedBook(String emailId, String subscriptionId);
+
+	ResponseEntity<?> readSubscribedBook(String emailId, String subscriptionId);
+
+	ResponseEntity<?> cancelSubscribedBook(String emailId, String subscriptionId);
+
+	List<Book> getAllAuthorBooks(int authorId);
+
 }

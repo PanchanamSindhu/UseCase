@@ -1,12 +1,17 @@
 package com.digitalbook.serviceImpl;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.util.MultiValueMap;
 import org.springframework.util.StringUtils;
 
 import com.digitalbook.entity.Book;
@@ -47,67 +52,83 @@ public class BookServiceImpl implements BookService {
 
 	@Override
 	public List<Book> searchBooks(String title, String category, String author) {
-		{
-			List<Book> listOfBooks = new ArrayList<>();
-			Boolean flag = false;
-
-			List<Book> bookList = bookRepository.findAll();
-			System.out.println("title is : " + title + " , " + "category is: " + category);
-			System.out.println("boom list :" + bookList);
-			if (!bookList.isEmpty()) {
-				if (!StringUtils.isEmpty(title) && !StringUtils.isEmpty(category) && !StringUtils.isEmpty(author)) {
-					listOfBooks = bookList.stream().filter(
-							book -> ((book.getActive() == Boolean.TRUE) && (book.getTitle().equalsIgnoreCase(title)
-									&& book.getCategory().toString().equalsIgnoreCase(category)
-									&& book.getAuthorName().equalsIgnoreCase(author)
-
-							))).collect(Collectors.toList());
-					System.out.println("inside if loop :" + listOfBooks);
-				} else {
-					listOfBooks = new ArrayList<>(bookList);
-					if (!title.isBlank()) {
-						System.out.println("flag is in title: " + flag);
-						flag = true;
-						System.out.println("flag is in title after update: " + flag);
-						listOfBooks = bookList.stream().filter(
-								book -> (book.getActive() == Boolean.TRUE) && (book.getTitle().equalsIgnoreCase(title)))
-								.collect(Collectors.toList());
-					}
-					if (!author.isBlank()) {
-						flag = true;
-						System.out.println("flag is in author after update: " + flag);
-						listOfBooks = listOfBooks.stream()
-								.filter(book -> (book.getActive() == Boolean.TRUE)
-										&& (book.getAuthorName().equalsIgnoreCase(author)))
-								.collect(Collectors.toList());
-					}
-					if (!category.isEmpty()) {
-						flag = true;
-						System.out.println("flag is in catefgory after update: " + flag);
-						listOfBooks = listOfBooks.stream()
-								.filter(book -> (book.getActive() == Boolean.TRUE)
-										&& (book.getCategory().toString().equalsIgnoreCase(category)))
-								.collect(Collectors.toList());
-					}
-					System.out.println("inside else loop :" + listOfBooks);
-					System.out.println("flag value s " + flag);
-
-					if (flag.equals(Boolean.FALSE)) {
-						listOfBooks = new ArrayList<>();
-					}
-				}
+		log.info("###BookServiceImplementation - SearchBook###");
+		List<Book> listOfBooks = new ArrayList<>();
+		List<Book> bookList = bookRepository.findAll();
+		log.info("book list count "+bookList.size());
+		for(Book b:bookList) {
+			if(b.getTitle().equalsIgnoreCase(title) && b.getCategory().toString().equalsIgnoreCase(category)) {
+				listOfBooks.add(b);
 			}
-			return listOfBooks;
 		}
-
+		return listOfBooks;
 	}
 
 	@Override
-	public Book bookUpdate(Book book, Integer authorId, Integer bookId) {
-		log.info("###BookServiceImplementation - BookUpdate###");
+	public Book bookUpdate(Book book, Integer authorId) {
+		log.info("***BookServiceImplementation - BookUpdate**");
 //		Book b1=this.getBook(book.getTitle());
-//		b1.setBookAuthorId(authorId);
+		book.setBookAuthorId(authorId);
 		return this.bookRepository.save(book);
 	}
+
+	@Override
+	public ResponseEntity<?> bookBlocking(Integer bookId, Integer authorId) {
+		log.info("****BookServiceImplementation - Blocking****");
+		this.bookRepository.bookStatusUpdate(bookId, authorId, false);
+		return this.bookRepository.bookStatus(bookId, authorId).equals("false")
+				? new ResponseEntity<String>("Updated Sucessfully!!", HttpStatus.OK)
+				: new ResponseEntity<String>("Failed to update!!", HttpStatus.INTERNAL_SERVER_ERROR);
+	}
+
+	@Override
+	public ResponseEntity<?> bookUnblocking(Integer bookId, Integer authorId) {
+		Integer i = this.bookRepository.bookStatusUpdate(bookId, authorId, true);
+		log.info("***BookServiceImplementation - Unblocking**" + i + " test : "
+				+ this.bookRepository.bookStatus(bookId, authorId));
+		return this.bookRepository.bookStatus(bookId, authorId).equals("true")
+				? new ResponseEntity<String>("Updated Sucessfully!!", HttpStatus.OK)
+				: new ResponseEntity<String>("Failed to update!!", HttpStatus.INTERNAL_SERVER_ERROR);
+	}
+
+	@Override
+	public String bookSubscribing(Integer bookId) {
+		log.info("***BookServiceImplementation - bookSubscribing****");
+		Random random = new Random();
+		int num = random.nextInt(100000);
+		String formatted = String.format("%05d", num);
+		this.bookRepository.bookSubscribe(bookId, formatted, LocalDate.now(), "yes");
+		return "Book Subscription Done";
+	}
+
+	@Override
+	public ResponseEntity<?> fetchAllSubscribedBooks(Integer authorId) {
+		log.info("###BookServiceImplementation - FetchAllSubscribeBook###");
+		if (this.bookRepository.bookFetchCheck(authorId) != 0) {
+
+			return new ResponseEntity(this.bookRepository.bookFetch(authorId).toString(), HttpStatus.OK);
+		} else {
+			return new ResponseEntity("No Book match found with the provided details", HttpStatus.OK);
+		}
+	}
+
+	@Override
+	public List<Book> getAllAuthorBooks(int authorId) {
+		// TODO Auto-generated method stub
+		log.info("author id is :"+authorId);
+		List<Book> listOfBooks = new ArrayList<>();
+		log.info("inside book controller ");
+		List<Book> bookList = bookRepository.findAll();
+		log.info("book list length "+bookList.size());
+		for(Book b:bookList) {
+			if(b.getBookAuthorId().equals(authorId)) {
+				log.info("inside for loop :"+b.getBookAuthorId() +":"+ authorId);
+				listOfBooks.add(b);
+			}
+		}
+		return listOfBooks;
+	}
+
+	
 
 }
